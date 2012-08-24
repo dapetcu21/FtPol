@@ -9,10 +9,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.DatagramChannel;
 
-public class FUTEftpol_server {
+public class FuteServer {
 	public final static int PORT = 7777;
 	
-	public static void main(String[] args) throws IOException {
+	public static void listen(String[] args) throws IOException {
 		int port = 7777;
 		
 		
@@ -38,11 +38,9 @@ public class FUTEftpol_server {
 	    		
 	    		
 	    	}catch (Exception ex) {
-	        System.err.println("Debug:: Exception occured: " +ex);
-	        
+	        System.err.println("Debug :: Exception occured: " +ex);
 	        
 	    }
+	}	    
 	}
-
-}
 }
