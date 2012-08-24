@@ -1,30 +1,19 @@
 package grepit.ftpol;
 
 import android.content.Context;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
 
-public class RootView extends SurfaceView implements SurfaceHolder.Callback  {
 
-	public RootView(Context context) {
-		super(context);
-		
+public class RootView extends GLSurfaceView {
+
+	private FuteRenderer _renderer;
+	
+	public RootView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		_renderer = new FuteRenderer();
+		setRenderer(_renderer);
 	}
-
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void surfaceCreated(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 	
 }

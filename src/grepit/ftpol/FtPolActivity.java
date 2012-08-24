@@ -10,7 +10,7 @@ public class FtPolActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        view = new RootView(this);
+        view = new RootView(this, null);
         setContentView(view);
     }
 }
