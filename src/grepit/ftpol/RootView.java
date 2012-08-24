@@ -13,6 +13,8 @@ public class RootView extends GLSurfaceView {
 		super(context, attrs);
 		_renderer = new FuteRenderer();
 		setRenderer(_renderer);
+		
+		
 	}
 	
 	

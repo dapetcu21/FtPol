@@ -12,5 +12,6 @@ public class FtPolActivity extends Activity {
         super.onCreate(savedInstanceState);
         view = new RootView(this, null);
         setContentView(view);
+        
     }
 }
