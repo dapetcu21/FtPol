@@ -1,9 +1,13 @@
 package grepit.ftpol;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
+
+import android.util.Log;
 
 
 public class FuteView {
@@ -20,7 +24,7 @@ public class FuteView {
 	rect bounds() { return new rect(0, 0, _frame.size.x, _frame.size.y); }
 	
 	vec4 backgroundColor() { return new vec4(bgclr); }
-	void setBackgroundColor(vec4 bg) { bgclr = new vec4(bgclr); }
+	void setBackgroundColor(vec4 bg) { bgclr = new vec4(bg); }
 	
 	
 	void setFrame(rect f)
@@ -49,50 +53,56 @@ public class FuteView {
 		_parent.removeChild(this);
 	}
 	
-	void draw()
+	void drawbg(GL10 gl)
 	{
 		if (bgclr != null)
 		{
-			GL10 gl = _renderer.glContext();
-			
 			float b [] = {
-					0, 0,
-					1, 0,
-					0, 1,
-					1, 1
+					0, _frame.origin.y, 0,
+					_frame.size.x, 0 , 0,
+					0, _frame.size.x, 0,
+					_frame.size.x, _frame.size.x, 0
 			};
-			for (int i = 0; i < 4; i++)
-			{
-				b[i*2]   = _frame.origin.x + _frame.size.x * b[i*2];
-				b[i*2+1] = _frame.origin.y + _frame.size.y * b[i*2+1];
-			}
 			
-			gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-			gl.glColor4f(bgclr.x, bgclr.y, bgclr.z, bgclr.w);
-			gl.glVertexPointer(2, GL10.GL_FLOAT, 0, FloatBuffer.wrap(b));
+			ByteBuffer vbb = ByteBuffer.allocateDirect(b.length * 4);
+		    vbb.order(ByteOrder.nativeOrder());
+		    FloatBuffer fb = vbb.asFloatBuffer();
+		    fb.put(b);
+		    fb.position(0);
+
+		    _renderer.setVertexArray(gl, true);
+		    _renderer.setTextureCoordArray(gl, false);
+		    _renderer.setColorArray(gl, false);
+		    gl.glColor4f(bgclr.x, bgclr.y, bgclr.z, bgclr.w);
+		    gl.glVertexPointer(3, GL10.GL_FLOAT, 0, fb);
 			gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 		}
 	}
 	
-	void render()
+	void draw(GL10 gl)
 	{
-		GL10 gl = _renderer.glContext();
-		gl.glPushMatrix();
-		multMatrix(gl);
-		draw();
-		renderChildren();
-		gl.glPopMatrix();
 	}
+	
 	
 	private void multMatrix(GL10 gl) {
 		gl.glTranslatef(_frame.origin.x, _frame.origin.y, 0);
 	}
 	
-	void renderChildren()
+	void renderChildren(GL10 gl)
 	{
 		for (FuteView v : _children)
 		{
-			v.render();
+			v.render(gl);
 		}
+	}
+	
+	void render(GL10 gl)
+	{
+		gl.glPushMatrix();
+		multMatrix(gl);
+		drawbg(gl);
+		draw(gl);
+		renderChildren(gl);
+		gl.glPopMatrix();
 	}
 }

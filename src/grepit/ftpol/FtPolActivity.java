@@ -14,8 +14,8 @@ public class FtPolActivity extends Activity {
         super.onCreate(savedInstanceState);
         view = new RootView(this, null);
         setContentView(view);
-        srv_init sv = new srv_init();
-        sv.start();
+       //srv_init sv = new srv_init();
+       // sv.start();
     }
     
 
