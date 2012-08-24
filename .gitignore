@@ -4,3 +4,4 @@ gen
 *.swp
 *.swo
 .settings
+.classpath
