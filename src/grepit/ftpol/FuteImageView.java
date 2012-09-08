@@ -16,21 +16,21 @@ public class FuteImageView extends FuteView {
 	
 	FuteImage image() { return img; }
 	void setImage(FuteImage im) {
-		if (im != null)
-			im.retain();
-		if (img != null)
-			img.release();
 		img = im; 
 	}
+	
+	vec4 _tint = null;
+	vec4 tint() { return new vec4(_tint); }
+	void setTint(vec4 v) { _tint = new vec4(v); }
 	
 	void draw(GL10 gl)
 	{
 		if (img == null) return;
 		float b [] = {
-				0, _frame.origin.y, 0, 			 0, 0,
-				_frame.size.x, 0 , 0, 			 1, 0,
-				0, _frame.size.x, 0, 			 0, 1,
-				_frame.size.x, _frame.size.x, 0, 1, 1
+				0, 0, 0, 	            		 0, 1,
+				_frame.size.x, 0 , 0, 			 1, 1,
+				0, _frame.size.y, 0, 			 0, 0,
+				_frame.size.x, _frame.size.y, 0, 1, 0
 		};
 		
 		ByteBuffer vbb = ByteBuffer.allocateDirect(b.length * 4);
@@ -42,13 +42,17 @@ public class FuteImageView extends FuteView {
 	    _renderer.setVertexArray(gl, true);
 	    _renderer.setTextureCoordArray(gl, true);
 	    _renderer.setColorArray(gl, false);
-	    gl.glColor4f(1, 1, 1, 1);
-	    gl.glVertexPointer(3, GL10.GL_FLOAT, 5, fb);
+	    if (_tint == null)
+	    	gl.glColor4f(1, 1, 1, 1);
+	    else
+	    	gl.glColor4f(_tint.x, _tint.y, _tint.z, _tint.w);
+	    gl.glVertexPointer(3, GL10.GL_FLOAT, 5*4, fb);
 	    fb.position(3);
-	    gl.glTexCoordPointer(2, GL10.GL_FLOAT, 5, fb);
+	    gl.glTexCoordPointer(2, GL10.GL_FLOAT, 5*4, fb);
+	    
 	    gl.glBindTexture(GL10.GL_TEXTURE_2D, img.getID());
 	    gl.glEnable(GL10.GL_TEXTURE_2D);
-		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+	    gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 	    gl.glDisable(GL10.GL_TEXTURE_2D);
 	}
 

@@ -46,11 +46,13 @@ public class FuteView {
 	void addChild(FuteView v)
 	{
 		_children.add(v);
+		v._parent = this;
 	}
 	
 	void removeFromParent()
 	{
-		_parent.removeChild(this);
+		if (_parent != null)
+			_parent.removeChild(this);
 	}
 	
 	void drawbg(GL10 gl)
@@ -58,10 +60,10 @@ public class FuteView {
 		if (bgclr != null)
 		{
 			float b [] = {
-					0, _frame.origin.y, 0,
+					0, 0, 0,
 					_frame.size.x, 0 , 0,
-					0, _frame.size.x, 0,
-					_frame.size.x, _frame.size.x, 0
+					0, _frame.size.y, 0,
+					_frame.size.x, _frame.size.y, 0
 			};
 			
 			ByteBuffer vbb = ByteBuffer.allocateDirect(b.length * 4);
@@ -83,9 +85,19 @@ public class FuteView {
 	{
 	}
 	
+	private float sX = 1.0f;
+	private float sY = 1.0f;
+	
+	public float scaleX() { return sX; }
+	public float scaleY() { return sY; }
+	public void setScaleX(float v) { sX = v; }
+	public void setScaleY(float v) { sY = v; }
 	
 	private void multMatrix(GL10 gl) {
 		gl.glTranslatef(_frame.origin.x, _frame.origin.y, 0);
+		gl.glTranslatef(_frame.size.x/2, _frame.size.y/2, 0);
+		gl.glScalef(sX, sY, 1);
+		gl.glTranslatef(-_frame.size.x/2, -_frame.size.y/2, 0);
 	}
 	
 	void renderChildren(GL10 gl)
@@ -104,5 +116,42 @@ public class FuteView {
 		draw(gl);
 		renderChildren(gl);
 		gl.glPopMatrix();
+	}
+	
+	private boolean uin = false;
+	public boolean userInput() { return uin; }
+	public void setUserInput(boolean b) { uin = b; }
+	
+	public FuteView eventDepthFirst(FuteEvent evt, vec2 off) {
+		if (!uin) return null;
+		
+		vec2 o = new vec2(off.x + _frame.origin.x, off.y + _frame.origin.y);
+		
+		for (FuteView v : _children)
+		{
+			FuteView r = v.eventDepthFirst(evt, o);
+			if (r != null)
+				return r;
+		}
+		
+		if (	(evt.x <= o.x + _frame.size.x) &&
+				(evt.y <= o.y + _frame.size.y) &&
+				(evt.x >= o.x) &&
+				(evt.y >= o.y))
+		{
+			evt.orig = o;
+			if (onTouchDown(evt))
+				return this;
+		}
+		return null;
+	}
+	
+	public boolean onTouchDown(FuteEvent evt) {
+		return false;
+	}
+	
+	public void onTouchMoved(FuteEvent evt) {
+	}
+	public void onTouchUp(FuteEvent evt) {
 	}
 }
