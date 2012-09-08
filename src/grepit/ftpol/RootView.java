@@ -15,6 +15,8 @@ public class RootView extends GLSurfaceView {
 		_renderer = new FuteRenderer();
 		_renderer.setRootView(this);
 		setRenderer(_renderer);
+		
+		
 	}
 	
 	@Override
